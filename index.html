@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>News App</title>
+<title>Media Feed</title>
 
 <style>
 *{
@@ -14,12 +14,11 @@
 
 body{
     background:#000;
-    color:#fff;
-    font-family:Arial,sans-serif;
     overflow:hidden;
+    font-family:Arial,sans-serif;
 }
 
-/* Start Screen */
+/* Fullscreen Start */
 #startScreen{
     position:fixed;
     inset:0;
@@ -31,15 +30,15 @@ body{
 }
 
 #fullscreenBtn{
-    width:90px;
-    height:90px;
+    width:100px;
+    height:100px;
     border:none;
     border-radius:50%;
-    font-size:38px;
+    font-size:40px;
     cursor:pointer;
 }
 
-/* Main App */
+/* App */
 #app{
     display:none;
     width:100vw;
@@ -47,17 +46,14 @@ body{
     position:relative;
 }
 
-/* Instagram Style Full Screen Frame */
-.frame{
-    width:100%;
-    height:100%;
-    position:relative;
-    overflow:hidden;
-}
-
+/* Media Area */
 #mediaContainer{
-    width:100%;
-    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:65px;
+    background:#000;
 }
 
 #mediaContainer img,
@@ -67,39 +63,42 @@ body{
     object-fit:cover;
 }
 
-/* News Overlay */
-.news-content{
-    position:absolute;
-    left:15px;
-    right:15px;
-    bottom:80px;
-    background:rgba(0,0,0,0.45);
-    padding:12px;
-    border-radius:12px;
-}
-
-.news-content h2{
-    margin-bottom:8px;
-}
-
 /* Bottom Navigation */
 .bottom-nav{
-    position:absolute;
-    left:0;
-    right:0;
+    position:fixed;
     bottom:0;
-    height:60px;
-    background:rgba(0,0,0,.85);
+    left:0;
+    width:100%;
+    height:65px;
+    background:rgba(0,0,0,.9);
     display:flex;
     justify-content:space-around;
     align-items:center;
-    border-top:1px solid rgba(255,255,255,.1);
+    border-top:1px solid rgba(255,255,255,.15);
 }
 
 .bottom-nav a{
-    color:#fff;
+    color:white;
     text-decoration:none;
-    font-size:14px;
+    font-size:12px;
+    text-align:center;
+}
+
+.bottom-nav span{
+    display:block;
+    font-size:22px;
+}
+
+/* Counter */
+.counter{
+    position:absolute;
+    top:15px;
+    right:15px;
+    background:rgba(0,0,0,.5);
+    color:#fff;
+    padding:6px 10px;
+    border-radius:20px;
+    z-index:10;
 }
 </style>
 </head>
@@ -111,79 +110,85 @@ body{
 
 <div id="app">
 
-    <div class="frame">
+    <div class="counter" id="counter"></div>
 
-        <div id="mediaContainer"></div>
+    <div id="mediaContainer"></div>
 
-        <div class="news-content">
-            <h2>Breaking News</h2>
-            <p>Latest news updates will appear here.</p>
-        </div>
-
-        <div class="bottom-nav">
-            <a href="#">🏠 Home</a>
-            <a href="#">🎥 Videos</a>
-            <a href="#">📂 Category</a>
-            <a href="#">👤 Account</a>
-        </div>
-
-    </div>
+    <nav class="bottom-nav">
+        <a href="#"><span>🏠</span>Home</a>
+        <a href="#"><span>🎥</span>Videos</a>
+        <a href="#"><span>📂</span>Categories</a>
+        <a href="#"><span>👤</span>Account</a>
+    </nav>
 
 </div>
 
 <script>
 
-/* Put your Cloudinary media here */
+// Replace with your Cloudinary URLs
 const allMedia = [
+
 {
 type:"image",
-url:"https://res.cloudinary.com/dujoufris/image/upload/v1781711779/file_00000000aa3071fa9a302b75ebfe6ef7_dltshu.png"
+url:"https://res.cloudinary.com/demo/image/upload/sample.jpg"
 },
+
 {
 type:"video",
 url:"https://res.cloudinary.com/demo/video/upload/dog.mp4"
+},
+
+{
+type:"image",
+url:"https://res.cloudinary.com/demo/image/upload/sample.jpg"
 }
+
 ];
 
-const btn = document.getElementById("fullscreenBtn");
-const app = document.getElementById("app");
-const startScreen = document.getElementById("startScreen");
-const mediaContainer = document.getElementById("mediaContainer");
-
 let currentIndex = 0;
+
+const mediaContainer = document.getElementById("mediaContainer");
+const counter = document.getElementById("counter");
 
 function showMedia(index){
 
     const item = allMedia[index];
 
+    counter.textContent =
+        `${index + 1} / ${allMedia.length}`;
+
     if(item.type === "image"){
+
         mediaContainer.innerHTML = `
             <img src="${item.url}" alt="">
         `;
-    }
 
-    if(item.type === "video"){
+    }else{
+
         mediaContainer.innerHTML = `
-            <video autoplay muted loop playsinline>
+            <video autoplay muted controls playsinline>
                 <source src="${item.url}" type="video/mp4">
             </video>
         `;
     }
 }
 
-btn.addEventListener("click", async ()=>{
+/* Fullscreen */
+
+document.getElementById("fullscreenBtn")
+.addEventListener("click", async ()=>{
 
     try{
         await document.documentElement.requestFullscreen();
     }catch(e){}
 
-    startScreen.style.display="none";
-    app.style.display="block";
+    document.getElementById("startScreen").style.display="none";
+    document.getElementById("app").style.display="block";
 
     showMedia(currentIndex);
 });
 
-/* Swipe Up / Down */
+/* Swipe */
 
 let startY = 0;
 
