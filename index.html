@@ -3,222 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Media Feed</title>
-
+<title>News Feed</title>
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    background:#000;
-    overflow:hidden;
-    font-family:Arial,sans-serif;
-}
-
-/* Fullscreen Start */
-#startScreen{
-    position:fixed;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#000;
-    z-index:9999;
-}
-
-#fullscreenBtn{
-    width:100px;
-    height:100px;
-    border:none;
-    border-radius:50%;
-    font-size:40px;
-    cursor:pointer;
-}
-
-/* App */
-#app{
-    display:none;
-    width:100vw;
-    height:100vh;
-    position:relative;
-}
-
-/* Media Area */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif;}
+#app{width:100vw;height:100vh;position:relative;overflow:hidden;}
+.logo{position:fixed;top:15px;left:15px;z-index:1000;color:#fff;font-size:24px;font-weight:bold;}
 #mediaContainer{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:65px;
-    background:#000;
+position:fixed;top:0;left:0;right:0;bottom:65px;
+display:flex;justify-content:center;align-items:center;background:#000;
 }
-
-#mediaContainer img,
-#mediaContainer video{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-/* Bottom Navigation */
+.media-frame{height:100%;aspect-ratio:9/16;overflow:hidden;background:#000;}
+.media-frame img,.media-frame video{width:100%;height:100%;object-fit:cover;display:block;}
 .bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:65px;
-    background:rgba(0,0,0,.9);
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    border-top:1px solid rgba(255,255,255,.15);
+position:fixed;bottom:0;left:0;width:100%;height:65px;
+background:rgba(0,0,0,.75);
+display:flex;justify-content:space-around;align-items:center;
 }
-
-.bottom-nav a{
-    color:white;
-    text-decoration:none;
-    font-size:12px;
-    text-align:center;
-}
-
-.bottom-nav span{
-    display:block;
-    font-size:22px;
-}
-
-/* Counter */
-.counter{
-    position:absolute;
-    top:15px;
-    right:15px;
-    background:rgba(0,0,0,.5);
-    color:#fff;
-    padding:6px 10px;
-    border-radius:20px;
-    z-index:10;
-}
+.bottom-nav a{color:#fff;text-decoration:none;font-size:12px;text-align:center;}
+.bottom-nav span{display:block;font-size:22px;}
 </style>
 </head>
 <body>
-
-<div id="startScreen">
-    <button id="fullscreenBtn">⛶</button>
-</div>
-
 <div id="app">
+<div class="logo">NEWS</div>
+<div id="mediaContainer"></div>
 
-    <div class="counter" id="counter"></div>
-
-    <div id="mediaContainer"></div>
-
-    <nav class="bottom-nav">
-        <a href="#"><span>🏠</span>Home</a>
-        <a href="#"><span>🎥</span>Videos</a>
-        <a href="#"><span>📂</span>Categories</a>
-        <a href="#"><span>👤</span>Account</a>
-    </nav>
-
+<nav class="bottom-nav">
+<a href="#"><span>🏠</span>Home</a>
+<a href="#"><span>🎥</span>Videos</a>
+<a href="#"><span>📂</span>Categories</a>
+<a href="#"><span>👤</span>Account</a>
+</nav>
 </div>
 
 <script>
-
-// Replace with your Cloudinary URLs
 const allMedia = [
-
 {
 type:"image",
-url:"https://res.cloudinary.com/demo/image/upload/sample.jpg"
+url:"https://res.cloudinary.com/dujoufris/image/upload/v1781711779/file_00000000aa3071fa9a302b75ebfe6ef7_dltshu.png"
 },
-
 {
 type:"video",
-url:"https://res.cloudinary.com/demo/video/upload/dog.mp4"
-},
-
-{
-type:"image",
-url:"https://res.cloudinary.com/demo/image/upload/sample.jpg"
+url:"https://res.cloudinary.com/dujoufris/video/upload/v1781713943/VID_20260617_090426_628_dm00bf.mp4"
 }
-
 ];
 
 let currentIndex = 0;
-
 const mediaContainer = document.getElementById("mediaContainer");
-const counter = document.getElementById("counter");
 
 function showMedia(index){
+const item = allMedia[index];
 
-    const item = allMedia[index];
-
-    counter.textContent =
-        `${index + 1} / ${allMedia.length}`;
-
-    if(item.type === "image"){
-
-        mediaContainer.innerHTML = `
-            <img src="${item.url}" alt="">
-        `;
-
-    }else{
-
-        mediaContainer.innerHTML = `
-            <video autoplay muted controls playsinline>
-                <source src="${item.url}" type="video/mp4">
-            </video>
-        `;
-    }
+if(item.type === "image"){
+mediaContainer.innerHTML = `
+<div class="media-frame">
+<img src="${item.url}" alt="">
+</div>`;
+}else{
+mediaContainer.innerHTML = `
+<div class="media-frame">
+<video autoplay muted loop playsinline>
+<source src="${item.url}" type="video/mp4">
+</video>
+</div>`;
+}
 }
 
-/* Fullscreen */
-
-document.getElementById("fullscreenBtn")
-.addEventListener("click", async ()=>{
-
-    try{
-        await document.documentElement.requestFullscreen();
-    }catch(e){}
-
-    document.getElementById("startScreen").style.display="none";
-    document.getElementById("app").style.display="block";
-
-    showMedia(currentIndex);
-});
-
-/* Swipe */
+showMedia(0);
 
 let startY = 0;
-
 document.addEventListener("touchstart",(e)=>{
-    startY = e.touches[0].clientY;
+startY = e.touches[0].clientY;
 });
 
 document.addEventListener("touchend",(e)=>{
+let endY = e.changedTouches[0].clientY;
+let diff = startY - endY;
 
-    let endY = e.changedTouches[0].clientY;
-    let diff = startY - endY;
+if(Math.abs(diff) < 50) return;
 
-    if(Math.abs(diff) < 50) return;
+if(diff > 0){
+currentIndex = (currentIndex + 1) % allMedia.length;
+}else{
+currentIndex = (currentIndex - 1 + allMedia.length) % allMedia.length;
+}
 
-    if(diff > 0){
-        currentIndex++;
-        if(currentIndex >= allMedia.length){
-            currentIndex = 0;
-        }
-    }else{
-        currentIndex--;
-        if(currentIndex < 0){
-            currentIndex = allMedia.length - 1;
-        }
-    }
-
-    showMedia(currentIndex);
+showMedia(currentIndex);
 });
-
 </script>
-
 </body>
 </html>
