@@ -19,7 +19,7 @@ body{
     overflow:hidden;
 }
 
-/* Fullscreen Screen */
+/* Start Screen */
 #startScreen{
     position:fixed;
     inset:0;
@@ -31,77 +31,73 @@ body{
 }
 
 #fullscreenBtn{
-    width:100px;
-    height:100px;
+    width:90px;
+    height:90px;
     border:none;
     border-radius:50%;
-    background:#fff;
-    color:#000;
-    font-size:40px;
+    font-size:38px;
     cursor:pointer;
 }
 
 /* Main App */
 #app{
     display:none;
-    width:100%;
+    width:100vw;
     height:100vh;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-}
-
-/* 9:16 Frame */
-.frame{
-    width:min(56.25vh,100vw);
-    aspect-ratio:9/16;
-    background:#111;
-    overflow:hidden;
     position:relative;
 }
 
-.frame img{
+/* Instagram Style Full Screen Frame */
+.frame{
+    width:100%;
+    height:100%;
+    position:relative;
+    overflow:hidden;
+}
+
+#mediaContainer{
+    width:100%;
+    height:100%;
+}
+
+#mediaContainer img,
+#mediaContainer video{
     width:100%;
     height:100%;
     object-fit:cover;
 }
 
+/* News Overlay */
 .news-content{
     position:absolute;
-    bottom:70px;
     left:15px;
     right:15px;
-    background:rgba(0,0,0,0.5);
+    bottom:80px;
+    background:rgba(0,0,0,0.45);
     padding:12px;
-    border-radius:10px;
+    border-radius:12px;
 }
 
 .news-content h2{
-    font-size:20px;
     margin-bottom:8px;
-}
-
-.news-content p{
-    font-size:14px;
-    line-height:1.4;
 }
 
 /* Bottom Navigation */
 .bottom-nav{
-    position:fixed;
-    bottom:0;
+    position:absolute;
     left:0;
-    width:100%;
+    right:0;
+    bottom:0;
     height:60px;
-    background:#111;
+    background:rgba(0,0,0,.85);
     display:flex;
     justify-content:space-around;
     align-items:center;
-    border-top:1px solid #333;
+    border-top:1px solid rgba(255,255,255,.1);
 }
 
 .bottom-nav a{
-    color:white;
+    color:#fff;
     text-decoration:none;
     font-size:14px;
 }
@@ -109,50 +105,114 @@ body{
 </head>
 <body>
 
-<!-- Fullscreen Start -->
 <div id="startScreen">
     <button id="fullscreenBtn">⛶</button>
 </div>
 
-<!-- App -->
 <div id="app">
 
     <div class="frame">
 
-        <img src="https://picsum.photos/900/1600" alt="News Image">
+        <div id="mediaContainer"></div>
 
         <div class="news-content">
             <h2>Breaking News</h2>
-            <p>
-                Latest news updates will appear here.
-                Replace this with your dynamic content.
-            </p>
+            <p>Latest news updates will appear here.</p>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="#">🏠 Home</a>
+            <a href="#">🎥 Videos</a>
+            <a href="#">📂 Category</a>
+            <a href="#">👤 Account</a>
         </div>
 
     </div>
 
-    <nav class="bottom-nav">
-        <a href="#">🏠 Home</a>
-        <a href="#">🎥 Videos</a>
-        <a href="#">📂 Category</a>
-        <a href="#">👤 Account</a>
-    </nav>
-
 </div>
 
 <script>
+
+/* Put your Cloudinary media here */
+const allMedia = [
+{
+type:"image",
+url:"https://res.cloudinary.com/demo/image/upload/sample.jpg"
+},
+{
+type:"video",
+url:"https://res.cloudinary.com/demo/video/upload/dog.mp4"
+}
+];
+
 const btn = document.getElementById("fullscreenBtn");
 const app = document.getElementById("app");
 const startScreen = document.getElementById("startScreen");
+const mediaContainer = document.getElementById("mediaContainer");
 
-btn.addEventListener("click", async () => {
-    try {
+let currentIndex = 0;
+
+function showMedia(index){
+
+    const item = allMedia[index];
+
+    if(item.type === "image"){
+        mediaContainer.innerHTML = `
+            <img src="${item.url}" alt="">
+        `;
+    }
+
+    if(item.type === "video"){
+        mediaContainer.innerHTML = `
+            <video autoplay muted loop playsinline>
+                <source src="${item.url}" type="video/mp4">
+            </video>
+        `;
+    }
+}
+
+btn.addEventListener("click", async ()=>{
+
+    try{
         await document.documentElement.requestFullscreen();
-    } catch(e) {}
+    }catch(e){}
 
-    startScreen.style.display = "none";
-    app.style.display = "flex";
+    startScreen.style.display="none";
+    app.style.display="block";
+
+    showMedia(currentIndex);
 });
+
+/* Swipe Up / Down */
+
+let startY = 0;
+
+document.addEventListener("touchstart",(e)=>{
+    startY = e.touches[0].clientY;
+});
+
+document.addEventListener("touchend",(e)=>{
+
+    let endY = e.changedTouches[0].clientY;
+    let diff = startY - endY;
+
+    if(Math.abs(diff) < 50) return;
+
+    if(diff > 0){
+        currentIndex++;
+        if(currentIndex >= allMedia.length){
+            currentIndex = 0;
+        }
+    }else{
+        currentIndex--;
+        if(currentIndex < 0){
+            currentIndex = allMedia.length - 1;
+        }
+    }
+
+    showMedia(currentIndex);
+});
+
 </script>
 
 </body>
