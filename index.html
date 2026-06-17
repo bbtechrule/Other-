@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News App</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#000;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    overflow:hidden;
+}
+
+/* Fullscreen Screen */
+#startScreen{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+    z-index:9999;
+}
+
+#fullscreenBtn{
+    width:100px;
+    height:100px;
+    border:none;
+    border-radius:50%;
+    background:#fff;
+    color:#000;
+    font-size:40px;
+    cursor:pointer;
+}
+
+/* Main App */
+#app{
+    display:none;
+    width:100%;
+    height:100vh;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+/* 9:16 Frame */
+.frame{
+    width:min(56.25vh,100vw);
+    aspect-ratio:9/16;
+    background:#111;
+    overflow:hidden;
+    position:relative;
+}
+
+.frame img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.news-content{
+    position:absolute;
+    bottom:70px;
+    left:15px;
+    right:15px;
+    background:rgba(0,0,0,0.5);
+    padding:12px;
+    border-radius:10px;
+}
+
+.news-content h2{
+    font-size:20px;
+    margin-bottom:8px;
+}
+
+.news-content p{
+    font-size:14px;
+    line-height:1.4;
+}
+
+/* Bottom Navigation */
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:60px;
+    background:#111;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    border-top:1px solid #333;
+}
+
+.bottom-nav a{
+    color:white;
+    text-decoration:none;
+    font-size:14px;
+}
+</style>
+</head>
+<body>
+
+<!-- Fullscreen Start -->
+<div id="startScreen">
+    <button id="fullscreenBtn">⛶</button>
+</div>
+
+<!-- App -->
+<div id="app">
+
+    <div class="frame">
+
+        <img src="https://picsum.photos/900/1600" alt="News Image">
+
+        <div class="news-content">
+            <h2>Breaking News</h2>
+            <p>
+                Latest news updates will appear here.
+                Replace this with your dynamic content.
+            </p>
+        </div>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="#">🏠 Home</a>
+        <a href="#">🎥 Videos</a>
+        <a href="#">📂 Category</a>
+        <a href="#">👤 Account</a>
+    </nav>
+
+</div>
+
+<script>
+const btn = document.getElementById("fullscreenBtn");
+const app = document.getElementById("app");
+const startScreen = document.getElementById("startScreen");
+
+btn.addEventListener("click", async () => {
+    try {
+        await document.documentElement.requestFullscreen();
+    } catch(e) {}
+
+    startScreen.style.display = "none";
+    app.style.display = "flex";
+});
+</script>
+
+</body>
+</html>
