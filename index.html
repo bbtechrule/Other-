@@ -7,131 +7,112 @@
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-    font-family:Arial,sans-serif;
+width:100%;
+height:100%;
+overflow:hidden;
+background:#000;
+font-family:Arial,sans-serif;
 }
 
 #app{
-    width:100vw;
-    height:100vh;
+width:100vw;
+height:100vh;
 }
 
-/* TOP BAR - ONLY FULLSCREEN */
 .top-bar{
-    display:none;
-
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:60px;
-
-    background:#000;
-
-    align-items:center;
-    justify-content:space-between;
-
-    padding:0 15px;
-
-    z-index:9999;
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:60px;
+background:#000;
+align-items:center;
+justify-content:space-between;
+padding:0 15px;
+z-index:9999;
 }
 
 #siteTitle{
-    color:#fff;
-    font-size:20px;
-    font-weight:bold;
+color:#fff;
+font-size:20px;
+font-weight:bold;
 }
 
 #fullscreenBtn{
-    position:fixed;
-    top:15px;
-    right:15px;
-
-    width:40px;
-    height:40px;
-
-    border:none;
-    border-radius:8px;
-
-    background:#222;
-    color:#fff;
-
-    font-size:20px;
-    cursor:pointer;
-
-    z-index:10000;
+position:fixed;
+top:15px;
+right:15px;
+width:40px;
+height:40px;
+border:none;
+border-radius:8px;
+background:#222;
+color:#fff;
+font-size:20px;
+cursor:pointer;
+z-index:10000;
 }
 
-/* MEDIA AREA */
 #mediaContainer{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:65px;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background:#000;
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:65px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#000;
 }
 
 .media-frame{
-    width:100%;
-    height:100%;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
 .media-frame img,
 .media-frame video{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    background:#000;
+width:100%;
+height:100%;
+object-fit:contain;
+background:#000;
 }
 
-/* BOTTOM NAVIGATION */
 .bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:65px;
-
-    background:#000;
-    border-top:1px solid #222;
-
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    z-index:9999;
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+height:65px;
+background:#000;
+border-top:1px solid #222;
+display:flex;
+justify-content:space-around;
+align-items:center;
+z-index:9999;
 }
 
 .bottom-nav a{
-    color:#fff;
-    text-decoration:none;
-    font-size:12px;
-    text-align:center;
+color:#fff;
+text-decoration:none;
+font-size:12px;
+text-align:center;
 }
 
 .bottom-nav span{
-    display:block;
-    font-size:22px;
-    margin-bottom:2px;
+display:block;
+font-size:22px;
+margin-bottom:2px;
 }
 </style>
 </head>
@@ -140,130 +121,164 @@ html,body{
 <button id="fullscreenBtn">⛶</button>
 
 <div class="top-bar" id="topBar">
-    <div id="siteTitle">zerotoin.com</div>
+<div id="siteTitle">zerotoin.com</div>
 </div>
 
 <div id="app">
 
-    <div id="mediaContainer"></div>
+<div id="mediaContainer"></div>
 
-    <nav class="bottom-nav">
-        <a href="#"><span>🏠</span>Home</a>
-        <a href="#"><span>🎥</span>Videos</a>
-        <a href="#"><span>📂</span>Categories</a>
-        <a href="#"><span>👤</span>Account</a>
-    </nav>
+<nav class="bottom-nav">
+
+<a href="#" onclick="showHome()">
+<span>🏠</span>Home
+</a>
+
+<a href="#" onclick="showVideos()">
+<span>🎥</span>Videos
+</a>
+
+<a href="#">
+<span>📂</span>Categories
+</a>
+
+<a href="#">
+<span>👤</span>Account
+</a>
+
+</nav>
 
 </div>
 
+<script src="images.js"></script>
+<script src="videos.js"></script>
+
 <script>
 
-/* MEDIA LIST */
-const allMedia = [
-
-{
-type:"image",
-url:"https://res.cloudinary.com/dujoufris/image/upload/v1781711779/file_00000000aa3071fa9a302b75ebfe6ef7_dltshu.png"
-},
-
-{
-type:"video",
-url:"https://res.cloudinary.com/dujoufris/video/upload/v1781713943/VID_20260617_090426_628_dm00bf.mp4"
-}
-
-];
-
+let currentMedia = [];
 let currentIndex = 0;
 
-const mediaContainer = document.getElementById("mediaContainer");
+const mediaContainer =
+document.getElementById("mediaContainer");
 
 function showMedia(index){
 
-    const item = allMedia[index];
+const item = currentMedia[index];
 
-    if(item.type === "image"){
+if(item.type==="image"){
 
-        mediaContainer.innerHTML = `
-            <div class="media-frame">
-                <img src="${item.url}" alt="">
-            </div>
-        `;
+mediaContainer.innerHTML=`
+<div class="media-frame">
+<img src="${item.url}">
+</div>
+`;
 
-    }else{
+}else{
 
-        mediaContainer.innerHTML = `
-            <div class="media-frame">
-                <video autoplay muted loop playsinline controls>
-                    <source src="${item.url}" type="video/mp4">
-                </video>
-            </div>
-        `;
-    }
+mediaContainer.innerHTML=`
+<div class="media-frame">
+<video autoplay muted loop playsinline controls>
+<source src="${item.url}" type="video/mp4">
+</video>
+</div>
+`;
+
 }
 
-showMedia(0);
+}
 
-/* SWIPE FEED */
+function showHome(){
+
+currentMedia = images.map(url => ({
+type:"image",
+url:url
+}));
+
+currentIndex = 0;
+showMedia(currentIndex);
+
+}
+
+function showVideos(){
+
+currentMedia = videos.map(url => ({
+type:"video",
+url:url
+}));
+
+currentIndex = 0;
+showMedia(currentIndex);
+
+}
+
+showHome();
+
+/* Swipe */
 
 let startY = 0;
 
 document.addEventListener("touchstart",(e)=>{
-    startY = e.touches[0].clientY;
+startY = e.touches[0].clientY;
 });
 
 document.addEventListener("touchend",(e)=>{
 
-    let endY = e.changedTouches[0].clientY;
-    let diff = startY - endY;
+let endY = e.changedTouches[0].clientY;
+let diff = startY - endY;
 
-    if(Math.abs(diff) < 50) return;
+if(Math.abs(diff)<50) return;
 
-    if(diff > 0){
-        currentIndex = (currentIndex + 1) % allMedia.length;
-    }else{
-        currentIndex = (currentIndex - 1 + allMedia.length) % allMedia.length;
-    }
+if(diff>0){
+currentIndex =
+(currentIndex + 1) % currentMedia.length;
+}else{
+currentIndex =
+(currentIndex - 1 + currentMedia.length)
+% currentMedia.length;
+}
 
-    showMedia(currentIndex);
-
-});
-
-/* FULLSCREEN */
-
-const fullscreenBtn = document.getElementById("fullscreenBtn");
-const topBar = document.getElementById("topBar");
-
-fullscreenBtn.addEventListener("click", async ()=>{
-
-    if(!document.fullscreenElement){
-
-        try{
-            await document.documentElement.requestFullscreen();
-        }catch(err){}
-
-    }else{
-
-        try{
-            await document.exitFullscreen();
-        }catch(err){}
-
-    }
+showMedia(currentIndex);
 
 });
 
-document.addEventListener("fullscreenchange", ()=>{
+/* Fullscreen */
 
-    if(document.fullscreenElement){
+const fullscreenBtn =
+document.getElementById("fullscreenBtn");
 
-        topBar.style.display = "flex";
-        mediaContainer.style.top = "60px";
+const topBar =
+document.getElementById("topBar");
 
-    }else{
+fullscreenBtn.addEventListener("click",
+async ()=>{
 
-        topBar.style.display = "none";
-        mediaContainer.style.top = "0";
+if(!document.fullscreenElement){
 
-    }
+await document.documentElement
+.requestFullscreen();
+
+}else{
+
+await document.exitFullscreen();
+
+}
+
+});
+
+document.addEventListener(
+"fullscreenchange",()=>{
+
+if(document.fullscreenElement){
+
+topBar.style.display="flex";
+mediaContainer.style.top="60px";
+
+}else{
+
+topBar.style.display="none";
+mediaContainer.style.top="0";
+
+}
 
 });
 
