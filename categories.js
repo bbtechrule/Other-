@@ -2,11 +2,25 @@ function showCategories() {
 
   mediaContainer.innerHTML = `
 
-  <div class="categories-page">
+  <div style="
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+  ">
 
     <button
-      class="category-btn"
-      onclick="openDiagramSearch()">
+      onclick="openDiagramSearch()"
+      style="
+        background:#007bff;
+        color:white;
+        border:none;
+        padding:18px 30px;
+        border-radius:12px;
+        font-size:18px;
+        cursor:pointer;
+      ">
 
       🔍 Search Diagrams
 
@@ -20,11 +34,9 @@ function showCategories() {
 
 function openDiagramSearch() {
 
-  // Hide bottom navigation
   document.querySelector(".bottom-nav").style.display = "none";
 
-  // Open Diagram Search Website
   window.location.href =
-    "https://bbtechrule.github.io/Diagram-website-/";
+  "https://bbtechrule.github.io/Diagram-website-/";
 
 }
