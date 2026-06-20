@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>zerotoin • Google Login</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #06060f;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated cosmic background */
+    .cosmic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      animation: orbFloat 20s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.6) 0%, transparent 70%);
+      top: -200px;
+      left: -150px;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(34, 211, 238, 0.5) 0%, transparent 70%);
+      top: 60%;
+      right: -200px;
+      animation-delay: -7s;
+    }
+
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, transparent 70%);
+      bottom: -150px;
+      left: 30%;
+      animation-delay: -14s;
+    }
+
+    @keyframes orbFloat {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      25% {
+        transform: translate(80px, -60px) scale(1.1);
+      }
+      50% {
+        transform: translate(-40px, 80px) scale(0.9);
+      }
+      75% {
+        transform: translate(-90px, -30px) scale(1.05);
+      }
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: particleFloat linear infinite;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      5% {
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(40vh) translateX(50px) scale(1);
+        opacity: 0.8;
+      }
+      95% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(-30px) scale(0.3);
+        opacity: 0;
+      }
+    }
+
+    /* Shooting stars */
+    .shooting-star {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8);
+      animation: shoot linear infinite;
+      opacity: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .shooting-star::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
+    }
+
+    @keyframes shoot {
+      0% {
+        transform: translate(0, 0) rotate(-35deg);
+        opacity: 0;
+      }
+      2% {
+        opacity: 1;
+      }
+      5% {
+        transform: translate(-400px, 300px) rotate(-35deg);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-400px, 300px) rotate(-35deg);
+        opacity: 0;
+      }
+    }
+
+    .shooting-star:nth-child(1) {
+      top: 10%;
+      left: 80%;
+      animation-duration: 4s;
+      animation-delay: 0s;
+    }
+    .shooting-star:nth-child(2) {
+      top: 25%;
+      left: 70%;
+      animation-duration: 5s;
+      animation-delay: 2s;
+    }
+    .shooting-star:nth-child(3) {
+      top: 15%;
+      left: 90%;
+      animation-duration: 6s;
+      animation-delay: 4s;
+    }
+
+    /* Main login card */
+    .login-card {
+      background: rgba(12, 12, 28, 0.65);
+      backdrop-filter: blur(50px);
+      -webkit-backdrop-filter: blur(50px);
+      border-radius: 2.5rem;
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 0 120px rgba(99, 102, 241, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      width: 100%;
+      max-width: 480px;
+      padding: 3.5rem 2.5rem;
+      position: relative;
+      z-index: 2;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      animation: cardAppear 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      transform-origin: center;
+    }
+
+    @keyframes cardAppear {
+      0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(40px);
+      }
+      60% {
+        opacity: 1;
+        transform: scale(1.03) translateY(-5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* Glowing border animation */
+    .login-card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 2.6rem;
+      padding: 2px;
+      background: linear-gradient(
+        135deg,
+        transparent 20%,
+        rgba(99, 102, 241, 0.5),
+        rgba(34, 211, 238, 0.5),
+        rgba(168, 85, 247, 0.5),
+        transparent 80%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderGlow 4s linear infinite;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    @keyframes borderGlow {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Top accent line with pulse */
+    .top-accent {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #6366f1, #22d3ee, #a855f7, transparent);
+      border-radius: 0 0 50% 50%;
+      animation: accentPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes accentPulse {
+      0%, 100% {
+        opacity: 0.6;
+        width: 50%;
+      }
+      50% {
+        opacity: 1;
+        width: 70%;
+      }
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Animated welcome badge */
+    .welcome-badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 2rem;
+      padding: 0.4rem 1.3rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: #a5b4fc;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+      animation: badgeGlow 2.5s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-badge::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255,255,255,0.05),
+        transparent
+      );
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
+
+    @keyframes badgeGlow {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+      }
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 2.2rem;
+      background: linear-gradient(
+        135deg,
+        #e0e7ff 0%,
+        #c4b5fd 25%,
+        #67e8f9 50%,
+        #c4b5fd 75%,
+        #e0e7ff 100%
+      );
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+      animation: textGradient 4s ease-in-out infinite;
+    }
+
+    @keyframes textGradient {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .zerotoin-highlight {
+      font-weight: 700;
+      background: linear-gradient(135deg, #818cf8, #22d3ee, #a78bfa);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: textGradient 3s ease-in-out infinite;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-weight: 400;
+      font-size: 1rem;
+      margin-top: 0.6rem;
+      letter-spacing: 0.3px;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Google button section */
+    .google-section {
+      margin-top: 2.5rem;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
+    .google-label {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.3px;
+    }
+
+    /* Animated Google button */
+    .google-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.3rem;
+      padding: 1.1rem 1.5rem;
+      font-weight: 500;
+      color: #f1f5f9;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      letter-spacing: 0.2px;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Hover glow effect */
+    .google-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 1.3rem;
+      background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(34,211,238,0.3), rgba(168,85,247,0.3));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+    }
+
+    .google-btn:hover::before {
+      opacity: 1;
+    }
+
+    .google-btn:hover {
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 
+        0 20px 50px rgba(99, 102, 241, 0.3),
+        0 0 60px rgba(34, 211, 238, 0.15),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+      transform: translateY(-3px);
+      color: white;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .google-btn:active {
+      transform: translateY(0) scale(0.98);
+      transition: all 0.1s ease;
+    }
+
+    /* Google icon animation */
+    .google-icon-wrapper {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: iconBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes iconBounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-3px);
+      }
+    }
+
+    .google-btn img {
+      width: 26px;
+      height: 26px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+      transition: transform 0.3s ease;
+    }
+
+    .google-btn:hover img {
+      transform: rotate(-10deg) scale(1.1);
+    }
+
+    /* Ripple effect on click */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(0);
+      animation: rippleEffect 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes rippleEffect {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Footer text */
+    .footer-text {
+      text-align: center;
+      margin-top: 2.2rem;
+      color: #64748b;
+      font-size: 0.85rem;
+      letter-spacing: 0.2px;
+      animation: fadeInUp 0.8s ease-out 0.7s both;
+    }
+
+    .footer-text span {
+      color: #818cf8;
+      font-weight: 500;
+    }
+
+    /* Loading dots animation */
+    .loading-dots {
+      display: none;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .loading-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #a5b4fc;
+      animation: dotPulse 1.4s ease-in-out infinite;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes dotPulse {
+      0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    .google-btn.loading .btn-text {
+      display: none;
+    }
+    .google-btn.loading .loading-dots {
+      display: flex;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 2.5rem 1.8rem;
+        border-radius: 2rem;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+      .google-btn {
+        padding: 1rem 1.2rem;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Cosmic background orbs -->
+  <div class="cosmic-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Floating particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Shooting stars -->
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+
+  <!-- Main login card -->
+  <div class="login-card">
+    <div class="top-accent"></div>
+
+    <div class="brand">
+      <div class="welcome-badge">✦ welcome ✦</div>
+      <h1>
+        Welcome to <span class="zerotoin-highlight">zerotoin.com</span>
+      </h1>
+      <p class="subtitle">Sign in with your Google account to continue</p>
+    </div>
+
+    <div class="google-section">
+      <p class="google-label">🔐 Secure one-click login</p>
+
+      <!-- Google Login Button -->
+      <button class="google-btn" id="googleLoginBtn">
+        <div class="google-icon-wrapper">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        </div>
+        <span class="btn-text">Continue with Google</span>
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </button>
+    </div>
+
+    <div class="footer-text">
+      Powered by <span>zerotoin</span> • Zero to Infinite
+    </div>
+  </div>
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    (function() {
+      // ---- Generate floating particles ----
+      const particlesContainer = document.getElementById('particles');
+      const colors = ['#6366f1', '#22d3ee', '#a78bfa', '#818cf8', '#67e8f9'];
+      
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        const size = Math.random() * 3 + 1.5;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = Math.random() * 15 + 10 + 's';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.background = 'currentColor';
+        particlesContainer.appendChild(particle);
+      }
+
+      // ---- Ripple effect on button click ----
+      const googleBtn = document.getElementById('googleLoginBtn');
+      
+      googleBtn.addEventListener('click', function(e) {
+        // Create ripple
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        const rect = googleBtn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+        googleBtn.appendChild(ripple);
+        
+        // Remove ripple after animation
+        setTimeout(() => ripple.remove(), 600);
+
+        // Show loading state
+        googleBtn.classList.add('loading');
+      });
+
+      // ---- Google Client ID (demo placeholder - replace with your real one) ----
+      const GOOGLE_CLIENT_ID = "738637308014-5f5q9lqkvm0m7vqk8h0s3u7c9l0v8q3p.apps.googleusercontent.com";
+
+      // Trigger Google sign-in
+      googleBtn.addEventListener('click', function() {
+        if (window.google && google.accounts && google.accounts.id) {
+          google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+            context: "signin",
+          });
+          google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              console.log("Google One Tap not shown, redirecting to OAuth...");
+              startGoogleOAuthFlow();
+            }
+            // Reset loading state after prompt
+            setTimeout(() => googleBtn.classList.remove('loading'), 500);
+          });
+        } else {
+          startGoogleOAuthFlow();
+          setTimeout(() => googleBtn.classList.remove('loading'), 1000);
+        }
+      });
+
+      function startGoogleOAuthFlow() {
+        const redirectUri = window.location.origin + window.location.pathname;
+        const scope = "email profile openid";
+        const authUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+          "client_id=" + GOOGLE_CLIENT_ID +
+          "&redirect_uri=" + encodeURIComponent(redirectUri) +
+          "&response_type=token id_token" +
+          "&scope=" + encodeURIComponent(scope) +
+          "&include_granted_scopes=true" +
+          "&prompt=select_account" +
+          "&nonce=" + Math.random().toString(36).substring(2, 15);
+        window.location.href = authUrl;
+      }
+
+      function handleGoogleResponse(response) {
+        googleBtn.classList.remove('loading');
+        if (response.credential) {
+          const user = parseJwt(response.credential);
+          displaySuccessAnimation(user);
+        } else if (response.error) {
+          console.error("Google sign-in error:", response.error);
+          showError("Google sign-in was not completed. Please try again.");
+        }
+      }
+
+      function parseJwt(token) {
+        try {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+          ).join(''));
+          return JSON.parse(jsonPayload);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function displaySuccessAnimation(user) {
+        if (user && user.email) {
+          const userName = user.name || user.given_name || user.email.split('@')[0];
+          // Update button to show success
+          googleBtn.classList.remove('loading');
+          googleBtn.querySelector('.btn-text').textContent = '✓ Signed in!';
+          googleBtn.style.borderColor = 'rgba(34, 211, 238, 0.6)';
+          googleBtn.style.boxShadow = '0 15px 40px rgb
