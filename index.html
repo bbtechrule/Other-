@@ -615,6 +615,15 @@
         const auth = firebase.auth();
 
         // ============================================================
+        //  AUTO-REDIRECT IF ALREADY SIGNED IN
+        // ============================================================
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = "home.html";
+            }
+        });
+
+        // ============================================================
         //  DOM REFS
         // ============================================================
         const googleBtn = document.getElementById('googleLoginBtn');
@@ -684,9 +693,9 @@
                     const user = result.user;
                     localStorage.setItem('userName', user.displayName || 'User');
                     showToast(`✅ Welcome ${user.displayName || 'User'}!`, 'success');
-                    // Redirect after a moment
+                    // Redirect to home.html
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        window.location.href = 'home.html';
                     }, 1200);
                 })
                 .catch((error) => {
@@ -723,6 +732,10 @@
                         showToast(`🎉 Account created! Welcome ${userCredential.user.email}`, 'success');
                         emailInput.value = '';
                         passwordInput.value = '';
+                        // Redirect to home.html
+                        setTimeout(() => {
+                            window.location.href = 'home.html';
+                        }, 1200);
                     })
                     .catch((error) => {
                         setLoading(emailBtn, false);
@@ -737,6 +750,10 @@
                         showToast(`✅ Welcome back ${userCredential.user.email}`, 'success');
                         emailInput.value = '';
                         passwordInput.value = '';
+                        // Redirect to home.html
+                        setTimeout(() => {
+                            window.location.href = 'home.html';
+                        }, 1200);
                     })
                     .catch((error) => {
                         setLoading(emailBtn, false);
@@ -795,17 +812,6 @@
         });
 
         // ============================================================
-        //  AUTH STATE OBSERVER
-        // ============================================================
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                console.log('✅ User signed in:', user.email);
-            } else {
-                console.log('🔓 User signed out');
-            }
-        });
-
-        // ============================================================
         //  INIT: set default button text
         // ============================================================
         emailBtn.innerHTML = '<i class="fas fa-arrow-right" style="margin-right:8px;"></i> Sign in with email';
@@ -817,16 +823,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-        
