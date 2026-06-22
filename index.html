@@ -632,4 +632,201 @@
         // ============================================================
         //  TOAST HELPER
         // ============================================================
-        let t
+        let toastTimer = null;
+
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toastIcon.className = 'toast-icon';
+            if (type === 'success') {
+                toastIcon.classList.add('success');
+                toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else if (type === 'info') {
+                toastIcon.classList.add('info');
+                toastIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+            } else {
+                toastIcon.classList.add('info');
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            }
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============================================================
+        //  LOADING STATE
+        // ============================================================
+        function setLoading(btn, loading) {
+            if (loading) {
+                btn.classList.add('loading');
+                const sub = btn.querySelector('.btn-text .sub');
+                if (sub) sub.textContent = 'Processing…';
+            } else {
+                btn.classList.remove('loading');
+                const sub = btn.querySelector('.btn-text .sub');
+                if (sub) sub.textContent = 'Secure • Fast • Private';
+            }
+        }
+
+        // ============================================================
+        //  GOOGLE SIGN-IN
+        // ============================================================
+        googleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            setLoading(googleBtn, true);
+            showToast('🌐 Connecting to Google…', 'info');
+
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    setLoading(googleBtn, false);
+                    const user = result.user;
+                    localStorage.setItem('userName', user.displayName || 'User');
+                    showToast(`✅ Welcome ${user.displayName || 'User'}!`, 'success');
+                    // Redirect after a moment
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1200);
+                })
+                .catch((error) => {
+                    setLoading(googleBtn, false);
+                    console.error(error);
+                    showToast(`❌ ${error.message}`, 'info');
+                });
+        });
+
+        // ============================================================
+        //  EMAIL / PASSWORD (Login or Signup)
+        // ============================================================
+        emailBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!email || !password) {
+                showToast('⚠️ Please fill in both fields', 'info');
+                return;
+            }
+            if (password.length < 6) {
+                showToast('⚠️ Password must be at least 6 characters', 'info');
+                return;
+            }
+
+            setLoading(emailBtn, true);
+
+            if (isSigningUp) {
+                // ----- SIGN UP -----
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        setLoading(emailBtn, false);
+                        showToast(`🎉 Account created! Welcome ${userCredential.user.email}`, 'success');
+                        emailInput.value = '';
+                        passwordInput.value = '';
+                    })
+                    .catch((error) => {
+                        setLoading(emailBtn, false);
+                        console.error(error);
+                        showToast(`❌ ${error.message}`, 'info');
+                    });
+            } else {
+                // ----- SIGN IN -----
+                auth.signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        setLoading(emailBtn, false);
+                        showToast(`✅ Welcome back ${userCredential.user.email}`, 'success');
+                        emailInput.value = '';
+                        passwordInput.value = '';
+                    })
+                    .catch((error) => {
+                        setLoading(emailBtn, false);
+                        console.error(error);
+                        showToast(`❌ ${error.message}`, 'info');
+                    });
+            }
+        });
+
+        // ============================================================
+        //  TOGGLE SIGNUP / LOGIN
+        // ============================================================
+        toggleLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            isSigningUp = !isSigningUp;
+            if (isSigningUp) {
+                toggleLink.textContent = 'Sign in instead';
+                emailBtn.innerHTML = '<i class="fas fa-user-plus" style="margin-right:8px;"></i> Create account';
+                showToast('📝 Switch to sign-up mode', 'info');
+            } else {
+                toggleLink.textContent = 'Create account';
+                emailBtn.innerHTML = '<i class="fas fa-arrow-right" style="margin-right:8px;"></i> Sign in with email';
+                showToast('🔑 Switch to sign-in mode', 'info');
+            }
+        });
+
+        // ============================================================
+        //  FORGOT PASSWORD
+        // ============================================================
+        forgotLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            if (!email) {
+                showToast('⚠️ Enter your email address first', 'info');
+                emailInput.focus();
+                return;
+            }
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showToast(`📧 Password reset sent to ${email}`, 'success');
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showToast(`❌ ${error.message}`, 'info');
+                });
+        });
+
+        // ============================================================
+        //  ENTER KEY ON PASSWORD FIELD
+        // ============================================================
+        passwordInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                emailBtn.click();
+            }
+        });
+
+        // ============================================================
+        //  AUTH STATE OBSERVER
+        // ============================================================
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('✅ User signed in:', user.email);
+            } else {
+                console.log('🔓 User signed out');
+            }
+        });
+
+        // ============================================================
+        //  INIT: set default button text
+        // ============================================================
+        emailBtn.innerHTML = '<i class="fas fa-arrow-right" style="margin-right:8px;"></i> Sign in with email';
+        toggleLink.textContent = 'Create account';
+        isSigningUp = false;
+
+        console.log('🔥 Firebase Auth ready with your config.');
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+        
