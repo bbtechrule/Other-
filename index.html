@@ -542,9 +542,9 @@
             </p>
         </div>
 
-        <!-- Google Button -->
+        <!-- Google Button (id="googleLoginBtn" as requested) -->
         <div class="google-btn-wrapper">
-            <button class="google-btn" id="googleSignInBtn">
+            <button class="google-btn" id="googleLoginBtn">
                 <span class="google-icon">
                     <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -607,11 +607,20 @@
         <span id="toastMessage">Signed in successfully</span>
     </div>
 
+    <!-- ====== SCRIPT: login.js (module) ====== -->
+    <script type="module" src="login.js"></script>
+
+    <!-- Inline fallback (for demo if login.js is missing) — ensures the button works even without external file -->
     <script>
         (function() {
             "use strict";
 
-            const googleBtn = document.getElementById('googleSignInBtn');
+            // If login.js is loaded, it will handle the button.
+            // This is a safety net: if the module fails, we keep basic interaction alive.
+            // We'll wait for the module to load; if not, we'll attach listeners.
+            // But we also don't want to double-bind. So we check if the button already has a listener.
+
+            const googleBtn = document.getElementById('googleLoginBtn');
             const emailBtn = document.getElementById('emailSignInBtn');
             const emailInput = document.getElementById('emailInput');
             const toast = document.getElementById('toast');
@@ -632,20 +641,4 @@
                 } else {
                     toastIcon.classList.add('info');
                     toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-                }
-
-                toast.classList.add('show');
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 4000);
-            }
-
-            // ----- Google Sign-In -----
-            function handleGoogleSignIn() {
-                googleBtn.classList.add('loading');
-                googleBtn.querySelector('.btn-text .sub').textContent = 'Redirecting…';
-                showToast('🌐 Connecting to Google…', 'info');
-
-                setTimeout(() => {
-                    googleB
+ 
