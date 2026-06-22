@@ -1,14 +1,651 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in — Google</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ----- RESET & BASE ----- */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4285F4;
+            --primary-dark: #3367D6;
+            --primary-glow: rgba(66, 133, 244, 0.15);
+            --bg: #F0F4FF;
+            --card-bg: #FFFFFF;
+            --text-primary: #1A2332;
+            --text-secondary: #5A6B7C;
+            --text-muted: #9AABBB;
+            --border-light: #E8EDF5;
+            --shadow-card: 0 20px 60px rgba(66, 133, 244, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 30px 80px rgba(66, 133, 244, 0.12), 0 12px 32px rgba(0, 0, 0, 0.06);
+            --radius: 24px;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ----- Subtle background pattern ----- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(66, 133, 244, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(234, 67, 53, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(52, 168, 83, 0.03) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        /* ----- Floating decorative shapes ----- */
+        .deco-shape {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .deco-shape-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(66, 133, 244, 0.08), transparent 70%);
+            top: -100px;
+            right: -100px;
+            animation: floatDeco 25s ease-in-out infinite alternate;
+        }
+
+        .deco-shape-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(234, 67, 53, 0.06), transparent 70%);
+            bottom: -50px;
+            left: -50px;
+            animation: floatDeco 20s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatDeco {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(40px, -30px) scale(1.1);
+            }
+        }
+
+        /* ----- CARD ----- */
+        .login-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 3rem 2.5rem 2.8rem;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .login-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        /* ----- Header with accent bar ----- */
+        .header {
+            text-align: center;
+            margin-bottom: 2.8rem;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -0.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #4285F4, #34A853);
+            border-radius: 10px;
+        }
+
+        .header .avatar-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4285F4, #34A853);
+            padding: 3px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(66, 133, 244, 0.15);
+            transition: transform 0.4s ease;
+        }
+
+        .login-card:hover .header .avatar-ring {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .header .avatar-ring .inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: #4285F4;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.4rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .header .highlight {
+            color: #4285F4;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .header .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #4285F4;
+            opacity: 0.2;
+            border-radius: 10px;
+        }
+
+        /* ----- GOOGLE BUTTON (Clean version) ----- */
+        .google-btn-wrapper {
+            margin-top: 0.5rem;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: #FFFFFF;
+            border: 2px solid var(--border-light);
+            border-radius: 60px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .google-btn:hover {
+            border-color: #4285F4;
+            box-shadow: 0 8px 32px rgba(66, 133, 244, 0.12);
+            transform: translateY(-2px);
+            background: #FAFCFF;
+        }
+
+        .google-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 4px 16px rgba(66, 133, 244, 0.08);
+        }
+
+        .google-btn .google-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .google-btn .google-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .google-btn .btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .google-btn .btn-text .sub {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        /* ----- Alternative: Outline Google Button (optional style) ----- */
+        .google-btn-outline {
+            background: transparent;
+            border: 2px solid #4285F4;
+            color: #4285F4;
+        }
+
+        .google-btn-outline:hover {
+            background: #4285F4;
+            color: white;
+            border-color: #4285F4;
+        }
+
+        .google-btn-outline:hover .btn-text .sub {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ----- OR divider ----- */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.8rem 0 1.5rem;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-light);
+        }
+
+        /* ----- Email fallback (optional) ----- */
+        .email-fallback {
+            margin-top: 0.5rem;
+        }
+
+        .email-fallback .input-group {
+            margin-bottom: 0.8rem;
+        }
+
+        .email-fallback .input-group input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid var(--border-light);
+            border-radius: 60px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            background: var(--bg);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .email-fallback .input-group input:focus {
+            border-color: #4285F4;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.06);
+        }
+
+        .email-fallback .input-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .email-fallback .btn-email {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 60px;
+            background: var(--text-primary);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .email-fallback .btn-email:hover {
+            background: #2A3A4A;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ----- Features row ----- */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.8rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+
+        .feature-item:hover {
+            color: var(--text-secondary);
+        }
+
+        .feature-item i {
+            color: #4285F4;
+            font-size: 0.8rem;
+        }
+
+        /* ----- Footer ----- */
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .footer a:hover {
+            color: #4285F4;
+            border-bottom-color: #4285F4;
+        }
+
+        /* ----- TOAST ----- */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-primary);
+            backdrop-filter: blur(16px);
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast .toast-icon.success {
+            background: rgba(52, 168, 83, 0.2);
+            color: #34A853;
+        }
+
+        .toast .toast-icon.info {
+            background: rgba(66, 133, 244, 0.2);
+            color: #4285F4;
+        }
+
+        .toast .toast-icon i {
+            font-size: 0.9rem;
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 2rem 1.5rem 2rem;
+                border-radius: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header .avatar-ring {
+                width: 64px;
+                height: 64px;
+            }
+
+            .header .avatar-ring .inner {
+                font-size: 1.8rem;
+            }
+
+            .google-btn {
+                padding: 0.85rem 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .features {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .toast {
+                white-space: normal;
+                max-width: 90%;
+                padding: 0.8rem 1.5rem;
+                font-size: 0.85rem;
+                bottom: 1.2rem;
+            }
+
+            .email-fallback .input-group input {
+                font-size: 0.9rem;
+                padding: 0.7rem 1rem;
+            }
+        }
+
+        /* ----- LOADING STATE ----- */
+        .google-btn.loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .google-btn.loading .btn-text .sub {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
 <body>
 
-<h1>Login Page</h1>
+    <!-- Decorative shapes -->
+    <div class="deco-shape deco-shape-1"></div>
+    <div class="deco-shape deco-shape-2"></div>
 
-<button id="googleLoginBtn">
-Login With Google
-</button>
+    <!-- ====== LOGIN CARD ====== -->
+    <div class="login-card" role="main" aria-label="Sign in with Google">
 
-<script type="module" src="login.js"></script>
+        <!-- Header -->
+        <div class="header">
+            <div class="avatar-ring">
+                <div class="inner">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+            <h1>Welcome back</h1>
+            <p>
+                Sign in with <span class="highlight">Google</span> to continue
+            </p>
+        </div>
 
-</body>
-</html>
+        <!-- Google Button -->
+        <div class="google-btn-wrapper">
+            <button class="google-btn" id="googleSignInBtn">
+                <span class="google-icon">
+                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        <path fill="none" d="M0 0h48v48H0z"/>
+                    </svg>
+                </span>
+                <span class="btn-text">
+                    <span>Continue with Google</span>
+                    <span class="sub">Secure • Fast • Private</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider">or</div>
+
+        <!-- Email fallback (optional) -->
+        <div class="email-fallback">
+            <div class="input-group">
+                <input type="email" placeholder="Enter your email address" id="emailInput" />
+            </div>
+            <button class="btn-email" id="emailSignInBtn">
+                <i class="fas fa-arrow-right" style="margin-right:8px;"></i> Continue with email
+            </button>
+        </div>
+
+        <!-- Feature badges -->
+        <div class="features">
+            <span class="feature-item">
+                <i class="fas fa-shield-alt"></i> Secure
+            </span>
+            <span class="feature-item">
+                <i class="fas fa-bolt"></i> Fast
+            </span>
+            <span class="feature-item">
+                <i class="fas fa-user-check"></i> Verified
+            </span>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            By continuing, you agree to our
+            <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>.
+            <br />
+            <span style="opacity:0.5; font-size:0.65rem;">
+                <i class="fas fa-lock" style="margin-right:4px;"></i> 
+                Powered by Google OAuth
+            </span>
+        </div>
+    </div>
+
+    <!-- ====== TOAST ====== -->
+    <div class="toast" id="toast">
+        <span class="toast-icon success" id="toastIcon">
+            <i class="fas fa-check-circle"></i>
+        </span>
+        <span id="toastMessage">Signed in successfully</span>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            const googleBtn = document.getElementById('googleSignInBtn');
+            const emailBtn = document.getElementById('emailSignInBtn');
+            const emailInput = document.getElementById('emailInput');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            let toastTimer = null;
+
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                toastIcon.className = 'toast-icon';
+                if (type === 'success') {
+                    toastIcon.classList.add('success');
+                    toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                } else if (type === 'info') {
+                    toastIcon.classList.add('info');
+                    toastIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+                } else {
+                    toastIcon.classList.add('info');
+                    toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+                }
+
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
+            }
+
+            // ----- Google Sign-In -----
+            function handleGoogleSignIn() {
+                googleBtn.classList.add('loading');
+                googleBtn.querySelector('.btn-text .sub').textContent = 'Redirecting…';
+                showToast('🌐 Connecting to Google…', 'info');
+
+                setTimeout(() => {
+                    googleB
